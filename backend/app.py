@@ -36,7 +36,13 @@ def get_temperature():
     conn = sqlite3.connect('temphum_data.db')
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM temphum ORDER BY id DESC LIMIT 1")
+    data = cursor.fetchone()
     conn.close()
+    sample_data = {
+        'temperature': data[3],
+        'humidity': data[2]
+    }
+    return jsonify(sample_data)
 
 
 # @app.route('/led', methods=['POST'])
