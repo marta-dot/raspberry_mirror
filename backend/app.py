@@ -25,6 +25,11 @@ colors = [
     ("7e07", "05", "03ff001310ef"),  # pink
     ("7e07", "05", "0314000010ef"),  # red
     ("7e07", "05", "0300b5ff10ef")   # blue
+    ("7e07", "05", "0381ff0010ef")   # green
+    ("7e07", "05", "03ff000010ef")   # yellow
+    ("7e07", "05", "03ff00ff10ef")   # purple
+    ("7e07", "05", "03ff7f0010ef")   # orange
+    ("7e07", "05", "03ff7f7f10ef")   # white
 ]
 
 # Create an iterator to cycle through the colors
@@ -96,7 +101,7 @@ def read_sensor_data():
         print(f"Inserted data: {now}, {x}, {y}")
         address = "be:27:11:00:56:c2"
         asyncio.run(set_LED_color(address))
-        time.sleep(60)
+        time.sleep(20)
 
 async def set_LED_color(address):
     async with BleakClient(address) as client:
