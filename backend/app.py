@@ -5,6 +5,8 @@ import sqlite3
 import time
 from flask import Flask, jsonify
 from flask_cors import CORS
+import asyncio
+from bleak import BleakClient
 
 try:
     import RPi.GPIO as GPIO
@@ -82,7 +84,33 @@ def read_sensor_data():
         print(f"Inserted data: {now}, {x}, {y}")
         time.sleep(60)
 
+async def set_LED_color(address):
+    async with BleakClient(address) as client:
+        # różowy
+        header = bytes.fromhex("7e07")
+        command = bytes.fromhex("05")
+        params = bytes.fromhex("03ff001310ef")
+
+        # # czerwony
+        # header = bytes.fromhex("7e07")
+        # command = bytes.fromhex("05")
+        # params = bytes.fromhex("0314000010ef")
+
+        data = header + command + params
+        # data = header + command + params + bytes.fromhex("ef")
+        # data = bytes.fromhex("7e04010801ffff00ef")
+
+        model_number = await client.write_gatt_char(
+            "0000fff3-0000-1000-8000-00805f9b34fb",
+            data
+        )
+        print("Data sent successfully.")
+    asyncio.run(main(address))
+
 if __name__ == '__main__':
+    address = "be:27:11:00:56:c2"
+    asyncio.run(set_LED_color(address))
+
     sensor_thread = threading.Thread(target=read_sensor_data)
     sensor_thread.start()
     app.run(host='0.0.0.0', port=5000)
