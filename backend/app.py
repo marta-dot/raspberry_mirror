@@ -105,7 +105,6 @@ async def set_LED_color(address):
             data
         )
         print("Data sent successfully.")
-    asyncio.run(main(address))
 
 if __name__ == '__main__':
     address = "be:27:11:00:56:c2"
