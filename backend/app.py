@@ -18,6 +18,18 @@ try:
 except ImportError:
     from fake_adafruit_dht import DHT as Adafruit_DHT
 
+import itertools
+
+# Define the colors
+colors = [
+    ("7e07", "05", "03ff001310ef"),  # pink
+    ("7e07", "05", "0314000010ef"),  # red
+    ("7e07", "05", "0300b5ff10ef")   # blue
+]
+
+# Create an iterator to cycle through the colors
+color_cycle = itertools.cycle(colors)
+
 # Define the time zone
 timezone = pytz.timezone('Europe/Warsaw')
 
@@ -82,21 +94,33 @@ def read_sensor_data():
         cursor.execute("INSERT INTO temphum (znacznik_czasowy, hum, temp) VALUES (?, ?, ?)", (now, x, y))
         conn.commit()
         print(f"Inserted data: {now}, {x}, {y}")
+        address = "be:27:11:00:56:c2"
+        asyncio.run(set_LED_color(address))
         time.sleep(60)
 
 async def set_LED_color(address):
     async with BleakClient(address) as client:
-        # różowy
-        header = bytes.fromhex("7e07")
-        command = bytes.fromhex("05")
-        params = bytes.fromhex("03ff001310ef")
-
-        # # czerwony
+        # # różowy
+        # header = bytes.fromhex("7e07")
+        # command = bytes.fromhex("05")
+        # params = bytes.fromhex("03ff001310ef")
+        #
+        # # # czerwony
         # header = bytes.fromhex("7e07")
         # command = bytes.fromhex("05")
         # params = bytes.fromhex("0314000010ef")
+        #
+        # # # niebieski
+        # header = bytes.fromhex("7e07")
+        # command = bytes.fromhex("05")
+        # params = bytes.fromhex("0300b5ff10ef")
 
-        data = header + command + params
+        header_hex, command_hex, params_hex = next(color_cycle)
+        header = bytes.fromhex(header_hex)
+        command = bytes.fromhex(command_hex)
+        params = bytes.fromhex(params_hex)
+
+    data = header + command + params
         # data = header + command + params + bytes.fromhex("ef")
         # data = bytes.fromhex("7e04010801ffff00ef")
 
@@ -107,9 +131,6 @@ async def set_LED_color(address):
         print("Data sent successfully.")
 
 if __name__ == '__main__':
-    address = "be:27:11:00:56:c2"
-    asyncio.run(set_LED_color(address))
-
     sensor_thread = threading.Thread(target=read_sensor_data)
     sensor_thread.start()
     app.run(host='0.0.0.0', port=5000)
