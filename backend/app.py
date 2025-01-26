@@ -1,5 +1,6 @@
 import threading
 import datetime
+import pytz
 import sqlite3
 import time
 from flask import Flask, jsonify
@@ -14,6 +15,9 @@ try:
     import dht11
 except ImportError:
     from fake_adafruit_dht import DHT as Adafruit_DHT
+
+# Define the time zone
+timezone = pytz.timezone('Europe/Warsaw')
 
 app = Flask(__name__)
 CORS(app)
@@ -57,18 +61,18 @@ def read_sensor_data():
                        hum NUMBER,
                        temp NUMBER)''')
 
-    for j in range(3):
+    for j in range(10):
         result = sensor.read()
         if result.is_valid():  # Only process valid results
             x = result.humidity
             y = result.temperature
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            now = datetime.datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute("INSERT INTO temphum (znacznik_czasowy, hum, temp) VALUES (?, ?, ?)", (now, x, y))
             conn.commit()
             print(f"Inserted data: {now}, {x}, {y}")
         else:
             print("Invalid sensor reading")
-        time.sleep(30)
+        time.sleep(60)
 
     conn.close()
 
