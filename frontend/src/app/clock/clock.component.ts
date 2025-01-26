@@ -5,7 +5,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   standalone: true,
   templateUrl: './clock.component.html',
   imports: [],
-  styleUrls: ['./clock.component.css']
+  styleUrls: ['./clock.component.scss']
 })
 export class ClockComponent implements OnInit, OnDestroy {
   currentTime: string = '';

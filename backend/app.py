@@ -67,20 +67,20 @@ def read_sensor_data():
                        hum NUMBER,
                        temp NUMBER)''')
 
-    for j in range(10):
-        result = sensor.read()
-        if result.is_valid():  # Only process valid results
-            x = result.humidity
-            y = result.temperature
-            now = datetime.datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
-            cursor.execute("INSERT INTO temphum (znacznik_czasowy, hum, temp) VALUES (?, ?, ?)", (now, x, y))
-            conn.commit()
-            print(f"Inserted data: {now}, {x}, {y}")
-        else:
-            print("Invalid sensor reading")
-        time.sleep(60)
 
-    conn.close()
+    while True:
+        result = sensor.read()
+        while not result.is_valid():
+            result = sensor.read()
+            time.sleep(1)
+
+        x = result.humidity
+        y = result.temperature
+        now = datetime.datetime.now(timezone).strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("INSERT INTO temphum (znacznik_czasowy, hum, temp) VALUES (?, ?, ?)", (now, x, y))
+        conn.commit()
+        print(f"Inserted data: {now}, {x}, {y}")
+        time.sleep(60)
 
 if __name__ == '__main__':
     sensor_thread = threading.Thread(target=read_sensor_data)

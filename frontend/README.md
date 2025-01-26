@@ -62,9 +62,11 @@ For more information on using the Angular CLI, including detailed command refere
 Odpalenie backendu:
 
 python -m venv venv
-venv\Scripts\activate
+venv\Scripts\activate --windows
+source venv/bin/activate --linux
 pip install flask
 pip install flask_cors
+pip install dht11
 python app.py
 
 Odpalenie frontu:
@@ -72,3 +74,7 @@ Odpalenie frontu:
 npm install
 npm update?
 ng serve
+
+sql terimnal linux:
+sqlite3 temphum_data.db
+SELECT * FROM temphum;
