@@ -120,7 +120,7 @@ async def set_LED_color(address):
         command = bytes.fromhex(command_hex)
         params = bytes.fromhex(params_hex)
 
-    data = header + command + params
+        data = header + command + params
         # data = header + command + params + bytes.fromhex("ef")
         # data = bytes.fromhex("7e04010801ffff00ef")
 
