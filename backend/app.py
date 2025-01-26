@@ -24,11 +24,11 @@ import itertools
 colors = [
     ("7e07", "05", "03ff001310ef"),  # pink
     ("7e07", "05", "0314000010ef"),  # red
-    ("7e07", "05", "0300b5ff10ef")   # blue
-    ("7e07", "05", "0381ff0010ef")   # green
-    ("7e07", "05", "03ff000010ef")   # yellow
-    ("7e07", "05", "03ff00ff10ef")   # purple
-    ("7e07", "05", "03ff7f0010ef")   # orange
+    ("7e07", "05", "0300b5ff10ef"),   # blue
+    ("7e07", "05", "0381ff0010ef"),  # green
+    ("7e07", "05", "03ff000010ef"),   # yellow
+    ("7e07", "05", "03ff00ff10ef"),   # purple
+    ("7e07", "05", "03ff7f0010ef"),   # orange
     ("7e07", "05", "03ff7f7f10ef")   # white
 ]
 
