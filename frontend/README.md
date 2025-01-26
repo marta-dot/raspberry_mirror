@@ -61,9 +61,14 @@ For more information on using the Angular CLI, including detailed command refere
 ## Naszeeeeeeee 
 Odpalenie backendu:
 
+python -m venv venv
 venv\Scripts\activate
+pip install flask
+pip install flask_cors
 python app.py
 
 Odpalenie frontu:
 
+npm install
+npm update?
 ng serve

@@ -1,9 +1,9 @@
+import threading
+import datetime
+import sqlite3
+import time
 from flask import Flask, jsonify
 from flask_cors import CORS
-
-import time
-import sqlite3
-import datetime
 
 try:
     import RPi.GPIO as GPIO
@@ -17,16 +17,6 @@ except ImportError:
 
 app = Flask(__name__)
 CORS(app)
-
-# Konfiguracja czujnika i pinów LED
-SENSOR = Adafruit_DHT.DHT11
-SENSOR_PIN = 4  # Pin GPIO dla czujnika
-LED_PINS = {'red': 17, 'green': 27, 'blue': 22}  # Przykładowe GPIO dla LED
-
-GPIO.setmode(GPIO.BCM)
-for pin in LED_PINS.values():
-    GPIO.setup(pin, GPIO.OUT)
-
 
 @app.route('/data', methods=['GET'])
 def get_sample_data():
@@ -53,10 +43,11 @@ def get_temperature():
 #         GPIO.output(LED_PINS[color], GPIO.HIGH)
 #         return jsonify({'status': f'{color} LED turned on'})
 #     return jsonify({'error': 'Invalid color'}), 400
+def read_sensor_data():
+    GPIO.setmode(GPIO.BCM)
+    pin = 2
+    sensor = dht11.DHT11(pin=pin)
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
     conn = sqlite3.connect('temphum_data.db')
     cursor = conn.cursor()
 
@@ -66,11 +57,7 @@ if __name__ == '__main__':
                        hum NUMBER,
                        temp NUMBER)''')
 
-    GPIO.setmode(GPIO.BCM)
-    pin = 2
-    sensor = dht11.DHT11(pin=pin)
-
-    while True:
+    for j in range(3):
         result = sensor.read()
         if result.is_valid():  # Only process valid results
             x = result.humidity
@@ -78,6 +65,12 @@ if __name__ == '__main__':
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute("INSERT INTO temphum (znacznik_czasowy, hum, temp) VALUES (?, ?, ?)", (now, x, y))
             conn.commit()
-            time.sleep(60)
+            time.sleep(30)
 
-conn.close()
+    conn.close()
+
+if __name__ == '__main__':
+    sensor_thread = threading.Thread(target=read_sensor_data)
+    sensor_thread.start()
+    app.run(host='0.0.0.0', port=5000)
+
