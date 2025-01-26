@@ -65,7 +65,10 @@ def read_sensor_data():
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute("INSERT INTO temphum (znacznik_czasowy, hum, temp) VALUES (?, ?, ?)", (now, x, y))
             conn.commit()
-            time.sleep(30)
+            print(f"Inserted data: {now}, {x}, {y}")
+        else:
+            print("Invalid sensor reading")
+        time.sleep(30)
 
     conn.close()
 
